@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="IGNITERAのAIキャリア診断で、あなたの特性と企業文化を数値化。就活のミスマッチをなくす。" />
+  <title>IGNITERA | AIキャリア診断</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Oswald:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #000000;
+      --bg-section:  #0f0f0f;
+      --bg-card:     #1a1a1a;
+      --bg-card2:    #141414;
+      --text:        #ffffff;
+      --text-sub:    #9ca3af;
+      --text-muted:  #6b7280;
+      --red:         #dc2626;
+      --orange:      #f97316;
+      --gold:        #f59e0b;
+      --bright-gold: #fbbf24;
+      --border:      rgba(249, 115, 22, 0.2);
+      --glow:        rgba(249, 115, 22, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ============================
+       UTILITY
+    ============================ */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .highlight-orange { color: var(--orange); }
+    .highlight-gold   { color: var(--bright-gold); }
+
+    /* scroll-triggered fade */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-in.visible            { opacity: 1; transform: translateY(0); }
+    .fade-in.delay-1            { transition-delay: 0.1s; }
+    .fade-in.delay-2            { transition-delay: 0.2s; }
+    .fade-in.delay-3            { transition-delay: 0.3s; }
+    .fade-in.delay-4            { transition-delay: 0.4s; }
+
+    /* ============================
+       HEADER (fixed)
+    ============================ */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(249, 115, 22, 0.12);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo img {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+
+    .header-cta {
+      display: none;
+    }
+
+    @media (min-width: 640px) {
+      .header-cta {
+        display: inline-block;
+        padding: 8px 22px;
+        background: linear-gradient(135deg, var(--red), var(--orange));
+        color: #fff;
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+      .header-cta:hover {
+        box-shadow: 0 0 16px rgba(249, 115, 22, 0.5);
+        transform: translateY(-1px);
+      }
+    }
+
+    /* ============================
+       STICKY MOBILE CTA
+    ============================ */
+    .sticky-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 99;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(249, 115, 22, 0.18);
+    }
+    .sticky-bar a {
+      display: block;
+      text-align: center;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+    }
+    @media (min-width: 640px) {
+      .sticky-bar { display: none; }
+    }
+
+    /* ============================
+       SHARED CTA BUTTON
+    ============================ */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(249, 115, 22, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 32px rgba(249, 115, 22, 0.55);
+    }
+
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--text-sub);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      margin-top: 10px;
+    }
+    .btn-secondary:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: rgba(249, 115, 22, 0.05);
+    }
+
+    .cta-divider {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 14px 0 4px;
+      position: relative;
+    }
+    .cta-divider::before, .cta-divider::after {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      width: 60px;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 10px;
+    }
+
+    .diag-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      color: var(--orange);
+      margin-bottom: 14px;
+    }
+
+    .full-diag-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .cta-note {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ============================
+       SECTION BASE
+    ============================ */
+    section { padding: 80px 0; }
+
+    .section-heading {
+      font-size: clamp(22px, 5.5vw, 32px);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    /* ============================
+       [01] FV
+    ============================ */
+    #fv {
+      padding-top: 100px;
+      padding-bottom: 80px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #fv::before {
+      content: '';
+      position: absolute;
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70vw; height: 70vw;
+      max-width: 500px; max-height: 500px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .fv-inner {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* stat block */
+    .fv-stat-block { margin-bottom: 36px; }
+
+    .fv-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .fv-stat-title {
+      font-size: 15px;
+      color: var(--text-sub);
+      margin-bottom: 2px;
+    }
+
+    .fv-big-number {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(96px, 24vw, 152px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--bright-gold);
+      text-shadow: 0 0 48px rgba(251, 191, 36, 0.45);
+      margin: 4px 0;
+    }
+
+    .fv-source {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* cause block */
+    .fv-cause-block {
+      margin: 32px 0;
+      padding-left: 14px;
+      border-left: 3px solid var(--orange);
+    }
+    .fv-cause-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .fv-cause-text {
+      font-size: clamp(18px, 5vw, 24px);
+      font-weight: 700;
+      color: var(--orange);
+      line-height: 1.4;
+    }
+
+    /* divider */
+    .fv-divider {
+      width: 36px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+      margin: 32px 0;
+    }
+
+    /* solution block */
+    .fv-solution-block { margin-bottom: 36px; }
+
+    .fv-brand {
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--orange);
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .fv-headline {
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: 700;
+      line-height: 1.55;
+    }
+    .fv-headline .acc { color: var(--bright-gold); }
+
+    /* ============================
+       [02] STATS DEEP DIVE
+    ============================ */
+    #stats {
+      background: var(--bg-section);
+      border-top: 1px solid rgba(249, 115, 22, 0.1);
+      border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+    }
+
+    .reason-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .reason-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .reason-rank {
+      font-family: 'Oswald', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-muted);
+      min-width: 28px;
+    }
+    .reason-rank.em { color: var(--bright-gold); }
+    .reason-content { flex: 1; }
+    .reason-text {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .reason-text.em { color: var(--orange); }
+    .reason-bar-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+    }
+    .reason-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      width: 0;
+      transition: width 1.4s ease 0.2s;
+    }
+    .reason-bar-fill.animated { width: var(--w); }
+
+    .stats-conclusion {
+      background: var(--bg-card);
+      border: 1px solid rgba(249, 115, 22, 0.22);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .stats-conclusion p {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.65;
+    }
+    .stats-conclusion span { color: var(--orange); }
+
+    /* ============================
+       [03] EMPATHY
+    ============================ */
+    #empathy { background: var(--bg); }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid rgba(249, 115, 22, 0.4);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .empathy-footer {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.09), rgba(249, 115, 22, 0.09));
+      border: 1px solid rgba(249, 115, 22, 0.2);
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+    .empathy-footer p {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+
+    /* ============================
+       [04] SOLUTION (3 layers)
+    ============================ */
+    #solution { background: var(--bg-section); }
+
+    .layer-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .layer-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 20px 20px 20px 24px;
+      overflow: hidden;
+    }
+    .layer-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+    }
+    .layer-card.action::before  { background: var(--red); }
+    .layer-card.growth::before  { background: var(--orange); }
+    .layer-card.values::before  { background: var(--bright-gold); }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .layer-badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .action .layer-badge { background: rgba(220, 38, 38, 0.15);  color: var(--red); }
+    .growth .layer-badge { background: rgba(249, 115, 22, 0.15); color: var(--orange); }
+    .values .layer-badge { background: rgba(251, 191, 36, 0.15); color: var(--bright-gold); }
+
+    .layer-name { font-size: 16px; font-weight: 700; }
+    .layer-count {
+      position: absolute;
+      top: 16px; right: 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .layer-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .layer-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .layer-tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      color: var(--text-sub);
+    }
+    .layer-examples {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ============================
+       [05] SCORE PREVIEW
+    ============================ */
+    #score-preview { background: var(--bg); }
+
+    .score-card-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Radar chart card */
+    .radar-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(249, 115, 22, 0.18);
+      border-radius: 12px;
+      padding: 22px 20px;
+      margin-bottom: 14px;
+    }
+    .radar-wrap {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    .radar-wrap svg { width: 100%; height: auto; display: block; }
+
+    /* Personality type preview card */
+    .type-preview-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid rgba(249, 115, 22, 0.18);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      min-height: 110px;
+    }
+    .type-preview-inner {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .type-preview-icon { font-size: 22px; flex-shrink: 0; line-height: 1; }
+    .type-preview-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+    .type-preview-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+    .type-preview-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 62%;
+      background: linear-gradient(to bottom, transparent, var(--bg-card) 65%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 14px;
+    }
+    .type-preview-overlay p {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    /* 簡易 vs 本格 comparison */
+    .diag-compare {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 520px) {
+      .diag-compare { flex-direction: row; }
+      .compare-tier { flex: 1; }
+    }
+    .compare-tier {
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .simple-tier {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .full-tier {
+      background: rgba(249, 115, 22, 0.04);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+    }
+    .compare-tier-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .compare-badge {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 3px;
+    }
+    .compare-badge.simple { background: rgba(255,255,255,0.08); color: var(--text-sub); }
+    .compare-badge.full   { background: rgba(249,115,22,0.15); color: var(--orange); }
+    .compare-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .compare-tag.orange { color: rgba(249,115,22,0.7); }
+    .compare-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .compare-list li {
+      font-size: 13px;
+      color: var(--text-sub);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .compare-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-size: 11px;
+      top: 1px;
+    }
+    .full-tier .compare-list li { color: var(--text); }
+
+    .preview-note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* ============================
+       [06] BENEFITS
+    ============================ */
+    #benefits { background: var(--bg-section); }
+
+    .benefit-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .benefit-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 24px 20px;
+    }
+    .benefit-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: 44px;
+      font-weight: 700;
+      color: rgba(249, 115, 22, 0.12);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .benefit-title {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .benefit-body {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.75;
+    }
+
+    /* ============================
+       [07] HOW TO USE
+    ============================ */
+    #howto { background: var(--bg); }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 30px;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .step-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      margin-top: 6px;
+      background: linear-gradient(to bottom, rgba(249, 115, 22, 0.4), transparent);
+    }
+    .step:last-child .step-line { display: none; }
+    .step-body { padding-top: 8px; flex: 1; }
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+    .howto-note {
+      margin-top: 28px;
+      background: rgba(249, 115, 22, 0.06);
+      border: 1px solid rgba(249, 115, 22, 0.14);
+      border-radius: 8px;
+      padding: 13px 16px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    /* ============================
+       [08] MID CTA
+    ============================ */
+    #mid-cta {
+      background: linear-gradient(160deg, rgba(220, 38, 38, 0.07), rgba(249, 115, 22, 0.07));
+      border-top: 1px solid rgba(249, 115, 22, 0.14);
+      border-bottom: 1px solid rgba(249, 115, 22, 0.14);
+      padding: 64px 0;
+      text-align: center;
+    }
+    #mid-cta .section-heading { margin-bottom: 28px; }
+
+    /* ============================
+       [09] TRUST
+    ============================ */
+    #trust { background: var(--bg-section); }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .trust-stat {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 20px 14px;
+      text-align: center;
+    }
+    .trust-stat-val {
+      font-family: 'Oswald', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--bright-gold);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .trust-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .voices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .voice {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .voice-text {
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .voice-meta { font-size: 12px; color: var(--text-muted); }
+
+    .privacy-note {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    /* ============================
+       [10] FAQ
+    ============================ */
+    #faq { background: var(--bg); }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: left;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+    .faq-q:hover { background: rgba(255, 255, 255, 0.03); }
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--orange);
+      font-size: 18px;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.38s ease, padding 0.25s ease;
+      padding: 0 16px;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 16px 16px;
+    }
+    .faq-a p {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.72;
+    }
+
+    /* ============================
+       [11] FINAL CTA
+    ============================ */
+    #final-cta {
+      background: linear-gradient(160deg, #060000, #150800);
+      border-top: 1px solid rgba(249, 115, 22, 0.18);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #final-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .final-heading {
+      font-size: clamp(30px, 8vw, 48px);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .final-sub {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-bottom: 32px;
+    }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    footer {
+      background: #000;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 32px 20px 100px; /* bottom space for sticky bar */
+    }
+    @media (min-width: 640px) {
+      footer { padding-bottom: 32px; }
+    }
+    .footer-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .footer-logo img { height: 28px; display: block; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--text-sub); }
+    .footer-copy { font-size: 11px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ========== STICKY MOBILE CTA ========== -->
+  <div class="sticky-bar">
+    <a href="https://assessment-app-dusky.vercel.app/">簡易診断する（無料・15問）</a>
+  </div>
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="header-logo">
+      <img src="./S__50765850.jpg" alt="IGNITERA" />
+    </div>
+    <a href="https://assessment-app-dusky.vercel.app/" class="header-cta">無料で診断する</a>
+  </header>
+
+  <!-- ========== [01] FV ========== -->
+  <section id="fv">
+    <div class="fv-inner">
+
+      <div class="fv-stat-block fade-in">
+        <p class="fv-label">日本では</p>
+        <p class="fv-stat-title">3年以内離職率</p>
+        <div class="fv-big-number" id="fv-counter">約<span id="count-num">0</span>%</div>
+        <p class="fv-source">出典：厚生労働省「新規学卒就職者の離職状況」</p>
+      </div>
+
+      <div class="fv-cause-block fade-in delay-1">
+        <p class="fv-cause-label">その原因の1つが</p>
+        <p class="fv-cause-text">「企業文化の<br>ミスマッチ」</p>
+      </div>
+
+      <div class="fv-divider fade-in delay-2"></div>
+
+      <div class="fv-solution-block fade-in delay-2">
+        <p class="fv-brand">IGNITERA</p>
+        <p class="fv-headline">
+          AI診断で<br>
+          あなたの<span class="acc">特性</span>と<br>
+          企業文化を<span class="acc">数値化</span>します
+        </p>
+      </div>
+
+      <div class="fade-in delay-3">
+        <span class="diag-badge">簡易診断（15問・約3分）</span>
+        <a href="https://assessment-app-dusky.vercel.app/" class="btn-primary">無料で簡易診断してみる →</a>
+        <p class="cta-note">登録不要・約3分・完全無料</p>
+        <div class="cta-divider">または</div>
+        <a href="https://ignitera-official.vercel.app/" class="btn-secondary">IGNITERAホームページへ →</a>
+        <p class="full-diag-note">会員登録後に45問の本格診断が受けられます</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== [02] STATS DEEP DIVE ========== -->
+  <section id="stats">
+    <div class="container">
+      <p class="section-label fade-in">DATA</p>
+      <h2 class="section-heading fade-in">なぜ、3人に1人が<br>3年で辞めるのか</h2>
+      <p class="section-sub fade-in">離職の背景には、採用後に発覚する「思っていた会社と違う」という現実がある。</p>
+
+      <ul class="reason-list">
+        <li class="reason-item fade-in">
+          <span class="reason-rank">1</span>
+          <div class="reason-content">
+            <p class="reason-text">労働条件・職場環境のギャップ</p>
+            <div class="reason-bar-track">
+              <div class="reason-bar-fill" style="--w: 76%"></div>
+            </div>
+          </div>
+        </li>
+        <li class="reason-item fade-in delay-1">
+          <span class="reason-rank em">2</span>
+          <div class="reason-content">
+            <p class="reason-text em">企業文化・社風とのミスマッチ</p>
+            <div class="reason-bar-track">
+              <div class="reason-bar-fill" style="--w: 63%"></div>
+            </div>
+          </div>
+        </li>
+        <li class="reason-item fade-in delay-2">
+          <span class="reason-rank">3</span>
+          <div class="reason-content">
+            <p class="reason-text">仕事内容・役割の不一致</p>
+            <div class="reason-bar-track">
+              <div class="reason-bar-fill" style="--w: 54%"></div>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="stats-conclusion fade-in">
+        <p>これは<span>能力の問題</span>ではない。<br><span>「選び方」の問題</span>だ。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [03] EMPATHY ========== -->
+  <section id="empathy">
+    <div class="container">
+      <p class="section-label fade-in">CHECK</p>
+      <h2 class="section-heading fade-in">あなたは、こんな状態で<br>就活していませんか？</h2>
+
+      <ul class="checklist">
+        <li class="fade-in"><span class="check-box"></span>自分の強みを言葉にするのが難しい</li>
+        <li class="fade-in delay-1"><span class="check-box"></span>ESに書く内容が毎回「なんとなく」になる</li>
+        <li class="fade-in delay-2"><span class="check-box"></span>なぜその企業を選んだのか、深く説明できない</li>
+        <li class="fade-in delay-3"><span class="check-box"></span>入社後に「こんな会社だとは思わなかった」が怖い</li>
+        <li class="fade-in delay-4"><span class="check-box"></span>周りは決まっているのに、自分の軸がまだない</li>
+      </ul>
+
+      <div class="empathy-footer fade-in">
+        <p>それが、ミスマッチの前兆です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [04] SOLUTION ========== -->
+  <section id="solution">
+    <div class="container">
+      <p class="section-label fade-in">IGNITERA DIAGNOSIS</p>
+      <h2 class="section-heading fade-in">IGNITERAは、<br>就活の"勘"をデータに変える</h2>
+      <p class="section-sub fade-in">あなたの行動・成長・価値観を3つのレイヤーで分析。簡易診断（15問）であなたの特性を数値化し、企業文化との相性を可視化します。本格的な45問診断は、ホームページの会員登録後に受けられます。</p>
+
+      <div class="layer-cards">
+
+        <div class="layer-card action fade-in">
+          <div class="layer-header">
+            <span class="layer-badge">ACTION</span>
+            <span class="layer-name">行動レイヤー</span>
+          </div>
+          <p class="layer-desc">あなたは何を、どう動いて成果を出すか</p>
+          <div class="layer-tags">
+            <span class="layer-tag">思考・計画</span>
+            <span class="layer-tag">実行・推進</span>
+            <span class="layer-tag">対人・協働</span>
+          </div>
+          <p class="layer-examples">課題発見力、実行力、巻き込み力 など</p>
+        </div>
+
+        <div class="layer-card growth fade-in delay-1">
+          <div class="layer-header">
+            <span class="layer-badge">GROWTH</span>
+            <span class="layer-name">成長レイヤー</span>
+          </div>
+          <p class="layer-desc">あなたはどれだけ変化し、学び続けられるか</p>
+          <div class="layer-tags">
+            <span class="layer-tag">自己認識</span>
+            <span class="layer-tag">学習と探求</span>
+            <span class="layer-tag">環境適応</span>
+          </div>
+          <p class="layer-examples">メタ認知力、知的好奇心、仮説検証力 など</p>
+        </div>
+
+        <div class="layer-card values fade-in delay-2">
+          <div class="layer-header">
+            <span class="layer-badge">VALUES</span>
+            <span class="layer-name">価値観レイヤー</span>
+          </div>
+          <p class="layer-desc">あなたの仕事への向き合い方の根っこは何か</p>
+          <div class="layer-tags">
+            <span class="layer-tag">責任感</span>
+            <span class="layer-tag">チームへの向き合い方</span>
+            <span class="layer-tag">精神的強さ</span>
+          </div>
+          <p class="layer-examples">当事者意識、利他性、レジリエンス など</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [05] SCORE PREVIEW ========== -->
+  <section id="score-preview">
+    <div class="container">
+      <p class="section-label fade-in">RESULT PREVIEW</p>
+      <h2 class="section-heading fade-in">あなたの特性が、<br>こんなふうに見えます</h2>
+      <p class="section-sub fade-in">簡易診断（15問）の結果は、3つの軸のレーダーチャートとあなたのタイプで表示されます。</p>
+
+      <!-- Radar chart mockup -->
+      <div class="radar-card fade-in">
+        <p class="score-card-label">レーダーチャート サンプル（架空のデータ）</p>
+        <div class="radar-wrap">
+          <svg viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="radarGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+                <stop offset="0%" stop-color="#dc2626" stop-opacity="0.75"/>
+                <stop offset="100%" stop-color="#f97316" stop-opacity="0.55"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Grid triangles (20% / 40% / 60% / 80% / 100%) -->
+            <!-- center=(150,128), r_max=90 -->
+            <!-- 100%: Action(150,38) Growth(227.94,173) Value(72.06,173) -->
+            <!-- 80%:  Action(150,56) Growth(222.35,164) Value(77.65,164) -->
+            <!-- 60%:  Action(150,74) Growth(207.96,155) Value(92.04,155) -->
+            <!-- 40%:  Action(150,92) Growth(192.57,146) Value(107.43,146) -->
+            <!-- 20%:  Action(150,110) Growth(177.18,137) Value(122.82,137) -->
+            <polygon points="150,110 177.18,137 122.82,137" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <polygon points="150,92 193.57,146 106.43,146" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <polygon points="150,74 210.96,155 89.04,155" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <polygon points="150,56 227.35,164 72.65,164" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <polygon points="150,38 244.94,173 55.06,173" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+
+            <!-- Axis lines -->
+            <line x1="150" y1="128" x2="150"   y2="38"  stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <line x1="150" y1="128" x2="244.94" y2="173" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <line x1="150" y1="128" x2="55.06"  y2="173" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+
+            <!-- Grid value labels along Action axis -->
+            <text x="155" y="112" font-size="8" fill="rgba(255,255,255,0.3)" font-family="monospace">5</text>
+            <text x="155" y="94"  font-size="8" fill="rgba(255,255,255,0.3)" font-family="monospace">10</text>
+            <text x="155" y="76"  font-size="8" fill="rgba(255,255,255,0.3)" font-family="monospace">15</text>
+            <text x="155" y="58"  font-size="8" fill="rgba(255,255,255,0.3)" font-family="monospace">20</text>
+
+            <!-- Data polygon (Action≈84%, Growth≈76%, Value≈72%) -->
+            <!-- Action r=75.6: (150, 52.4) -->
+            <!-- Growth r=68.4: (150+59.23, 128+34.2)=(209.23,162.2) -->
+            <!-- Value  r=64.8: (150-56.12, 128+32.4)=(93.88,160.4) -->
+            <polygon points="150,52 209,162 94,160"
+              fill="url(#radarGrad)"
+              stroke="#f97316" stroke-width="2" stroke-opacity="0.9"/>
+
+            <!-- Data point dots -->
+            <circle cx="150"  cy="52"  r="4" fill="#fbbf24" stroke="#000" stroke-width="1"/>
+            <circle cx="209"  cy="162" r="4" fill="#fbbf24" stroke="#000" stroke-width="1"/>
+            <circle cx="94"   cy="160" r="4" fill="#fbbf24" stroke="#000" stroke-width="1"/>
+
+            <!-- Axis labels -->
+            <text x="150" y="24" text-anchor="middle" font-size="11" fill="#ffffff" font-family="sans-serif" font-weight="bold">行動力</text>
+            <text x="150" y="35" text-anchor="middle" font-size="9"  fill="rgba(255,255,255,0.5)" font-family="sans-serif">(Action)</text>
+
+            <text x="252" y="186" text-anchor="start" font-size="11" fill="#ffffff" font-family="sans-serif" font-weight="bold">成長意欲</text>
+            <text x="252" y="197" text-anchor="start" font-size="9"  fill="rgba(255,255,255,0.5)" font-family="sans-serif">(Growth)</text>
+
+            <text x="48" y="186" text-anchor="end" font-size="11" fill="#ffffff" font-family="sans-serif" font-weight="bold">価値観</text>
+            <text x="48" y="197" text-anchor="end" font-size="9"  fill="rgba(255,255,255,0.5)" font-family="sans-serif">(Value)</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Personality type preview (blurred) -->
+      <div class="type-preview-card fade-in">
+        <p class="score-card-label">あなたのタイプ（サンプル）</p>
+        <div class="type-preview-inner">
+          <span class="type-preview-icon">🔥</span>
+          <div>
+            <p class="type-preview-label">先陣を切る「アクションリーダー」</p>
+            <p class="type-preview-desc">あなたは現場でいち早く課題に気づき、自ら手を動かして解決へと導く行動力に満ちています。机上の空論で終わらせず、周囲を巻き込みながら推進していく実行力が最大の強みです。</p>
+          </div>
+        </div>
+        <div class="type-preview-overlay">
+          <p>▶ 診断後にあなたのタイプが表示されます</p>
+        </div>
+      </div>
+
+      <!-- 簡易診断 vs 本格診断 -->
+      <div class="diag-compare fade-in">
+        <div class="compare-tier simple-tier">
+          <div class="compare-tier-head">
+            <span class="compare-badge simple">簡易診断</span>
+            <span class="compare-tag">無料・今すぐ</span>
+          </div>
+          <ul class="compare-list">
+            <li>3軸レーダーチャート</li>
+            <li>あなたのタイプ診断</li>
+          </ul>
+        </div>
+        <div class="compare-tier full-tier">
+          <div class="compare-tier-head">
+            <span class="compare-badge full">本格診断</span>
+            <span class="compare-tag orange">会員登録後</span>
+          </div>
+          <ul class="compare-list">
+            <li>より細分化された多軸分析</li>
+            <li>9サブカテゴリの詳細スコア</li>
+            <li>企業文化マッチング詳細</li>
+            <li>結果の保存・履歴管理</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="preview-note fade-in">自分のレーダーはどんな形？<br>まず、15問に答えてみよう。</p>
+    </div>
+  </section>
+
+  <!-- ========== [06] BENEFITS ========== -->
+  <section id="benefits">
+    <div class="container">
+      <p class="section-label fade-in">BENEFITS</p>
+      <h2 class="section-heading fade-in">診断でできる、3つのこと</h2>
+
+      <div class="benefit-cards">
+        <div class="benefit-card fade-in">
+          <div class="benefit-num">01</div>
+          <h3 class="benefit-title">"なんとなくの強み"が、<br>数値で見える化する</h3>
+          <p class="benefit-body">15問への回答が、行動・成長・価値観の3軸でスコア化される。面接でも、ESでも、根拠ある言葉で自分を語れるようになる。</p>
+        </div>
+        <div class="benefit-card fade-in delay-1">
+          <div class="benefit-num">02</div>
+          <h3 class="benefit-title">社風との相性が、<br>入社後の満足度を決める</h3>
+          <p class="benefit-body">「給料・知名度」ではなく「特性の一致度」で企業を選ぶ。それだけで、入社後の後悔を大きく減らせる。</p>
+        </div>
+        <div class="benefit-card fade-in delay-2">
+          <div class="benefit-num">03</div>
+          <h3 class="benefit-title">ES・面接に使える<br>「自分の言葉」が生まれる</h3>
+          <p class="benefit-body">スコアと分析コメントをそのまま自己分析の素材に使える。「私の強みは…」を、もう迷わず書けるようになる。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [07] HOW TO USE ========== -->
+  <section id="howto">
+    <div class="container">
+      <p class="section-label fade-in">HOW IT WORKS</p>
+      <h2 class="section-heading fade-in">3ステップ、<br>約3分で完了</h2>
+
+      <div class="steps">
+        <div class="step fade-in">
+          <div class="step-col">
+            <div class="step-num">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3 class="step-title">15問に答える（簡易診断）</h3>
+            <p class="step-desc">選択式のみ。スマホで完結します。約3分で答え終わります。</p>
+          </div>
+        </div>
+        <div class="step fade-in delay-1">
+          <div class="step-col">
+            <div class="step-num">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3 class="step-title">AIが3レイヤーを即時分析</h3>
+            <p class="step-desc">回答をもとに、行動・成長・価値観の3軸でスコアを算出します。</p>
+          </div>
+        </div>
+        <div class="step fade-in delay-2">
+          <div class="step-col">
+            <div class="step-num">3</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <h3 class="step-title">スコアと企業文化マッチングを受け取る</h3>
+            <p class="step-desc">あなたの特性プロフィールと、合いやすい企業文化タイプが一覧で表示されます。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-note fade-in">
+        登録不要・無料・好きなタイミングで
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [08] MID CTA ========== -->
+  <section id="mid-cta">
+    <div class="container">
+      <h2 class="section-heading fade-in">まず、数字で<br>自分を知ってみよう</h2>
+      <div class="fade-in delay-1">
+        <span class="diag-badge">簡易診断（15問・約3分）</span>
+        <a href="https://assessment-app-dusky.vercel.app/" class="btn-primary">無料でAI診断をはじめる</a>
+        <p class="cta-note">登録不要 · 約3分 · 完全無料</p>
+        <div class="cta-divider">または</div>
+        <a href="https://ignitera-official.vercel.app/" class="btn-secondary">IGNITERAホームページへ →</a>
+        <p class="full-diag-note">会員登録後に45問の本格診断が受けられます</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [09] TRUST ========== -->
+  <section id="trust">
+    <div class="container">
+      <p class="section-label fade-in">TRUST</p>
+      <h2 class="section-heading fade-in">多くの就活生が、<br>自分の軸を見つけています</h2>
+
+      <div class="trust-grid fade-in">
+        <div class="trust-stat">
+          <div class="trust-stat-val">β公開中</div>
+          <div class="trust-stat-label">サービスステータス</div>
+        </div>
+        <div class="trust-stat">
+          <div class="trust-stat-val">完全無料</div>
+          <div class="trust-stat-label">料金</div>
+        </div>
+      </div>
+
+      <div class="voices">
+        <div class="voice fade-in">
+          <p class="voice-text">「自己分析を何度やっても言語化できなかった強みが、スコアで初めてはっきり見えた。面接で使えた。」</p>
+          <p class="voice-meta">文系 / 4年生 / 商社志望</p>
+        </div>
+        <div class="voice fade-in delay-1">
+          <p class="voice-text">「企業文化とのマッチング結果が、なんとなく感じていた『ここは違う』という感覚と一致していた。選考の軸になった。」</p>
+          <p class="voice-meta">理系 / 4年生 / IT業界志望</p>
+        </div>
+        <div class="voice fade-in delay-2">
+          <p class="voice-text">「3年以内に辞める人の多さを見て、自分もミスマッチしたくないと思っていた。診断で選ぶ根拠が持てた。」</p>
+          <p class="voice-meta">文系 / 3年生 / コンサル志望</p>
+        </div>
+      </div>
+
+      <p class="privacy-note fade-in">個人情報の入力は不要です。回答は診断結果の生成にのみ使用されます。</p>
+    </div>
+  </section>
+
+  <!-- ========== [10] FAQ ========== -->
+  <section id="faq">
+    <div class="container">
+      <p class="section-label fade-in">FAQ</p>
+      <h2 class="section-heading fade-in">よくある質問</h2>
+
+      <div class="faq-list fade-in">
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>登録は必要ですか？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>不要です。今すぐ診断できます。メールアドレスやSNSアカウントの登録は一切不要です。</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>無料ですか？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>完全無料です。診断から結果の閲覧まで、すべて無料でご利用いただけます。</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>何分くらいかかりますか？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>簡易診断は15問なので約3分が目安です。選択式のみなので、テンポよく進められます。本格診断（45問）はホームページへの会員登録後に受けられます。</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>簡易診断と本格診断の違いは？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>こちらのページから受けられる簡易診断は15問・約3分で完了します。本格診断（45問）はより詳細な分析ができ、IGNITERAホームページの会員登録後に受けられます。</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>診断結果は就活にどう使えますか？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>自己PR・志望動機・企業選びの軸として活用できます。スコアと分析コメントをそのまま言語化の素材として使えます。</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>企業文化マッチングはどう機能しますか？</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>あなたの3レイヤースコアのパターンと、各企業文化タイプの特徴パターンを照合し、相性をパーセンテージで表示します。</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== [11] FINAL CTA ========== -->
+  <section id="final-cta">
+    <div class="container">
+      <h2 class="final-heading fade-in">あとは、<br>答えるだけ。</h2>
+      <p class="final-sub fade-in">自分の特性を知り、本当に合う企業と出会おう。</p>
+      <div class="fade-in delay-1">
+        <span class="diag-badge">簡易診断（15問・約3分）</span>
+        <a href="https://assessment-app-dusky.vercel.app/" class="btn-primary">今すぐ無料で簡易診断する</a>
+        <p class="cta-note">登録不要 · 約3分 · 完全無料</p>
+        <div class="cta-divider">または</div>
+        <a href="https://ignitera-official.vercel.app/" class="btn-secondary">IGNITERAホームページへ →</a>
+        <p class="full-diag-note">会員登録後に45問の本格診断が受けられます</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="./S__50765850.jpg" alt="IGNITERA" />
+      </div>
+      <div class="footer-links">
+        <a href="#">利用規約</a>
+        <a href="#">プライバシーポリシー</a>
+      </div>
+      <p class="footer-copy">© 2025 IGNITERA. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // IntersectionObserver: fade-in + bar animations + counter
+    // ============================================================
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+
+        if (el.classList.contains('fade-in')) {
+          el.classList.add('visible');
+        }
+        if (el.classList.contains('reason-bar-fill')) {
+          el.classList.add('animated');
+        }
+        if (el.id === 'fv-counter') {
+          runCounter(document.getElementById('count-num'), 0, 30, 1800);
+        }
+
+        observer.unobserve(el);
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reason-bar-fill').forEach(el => observer.observe(el));
+
+    const counterEl = document.getElementById('fv-counter');
+    if (counterEl) observer.observe(counterEl);
+
+    // ============================================================
+    // Counter animation: 0 → 30
+    // ============================================================
+    function runCounter(el, from, to, duration) {
+      if (!el || el.dataset.done) return;
+      el.dataset.done = '1';
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+        el.textContent = Math.floor(eased * (to - from) + from);
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = to;
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // ============================================================
+    // FAQ accordion
+    // ============================================================
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+
+        // close all
+        document.querySelectorAll('.faq-item.open').forEach(open => {
+          open.classList.remove('open');
+          open.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+
+        // open if was closed
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
